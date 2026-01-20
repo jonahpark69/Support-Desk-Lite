@@ -28,6 +28,13 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
+.btn[disabled],
+.btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn--primary {
   background: var(--accent);
   color: #0b0f15;
@@ -91,6 +98,57 @@
   margin-top: var(--space-1);
   color: #ff6b6b;
   font-size: 0.85rem;
+}
+
+.filters {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+}
+
+.ticket-list {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.ticket-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.ticket-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.pill--status {
+  border-color: rgba(90, 228, 167, 0.45);
+  color: var(--accent);
+}
+
+.pill--priority {
+  border-color: rgba(84, 130, 255, 0.5);
+  color: #87a4ff;
+}
+
+.pill--category {
+  border-color: rgba(255, 255, 255, 0.3);
+  color: var(--muted);
 }
 
 .grid {
