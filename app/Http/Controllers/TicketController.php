@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTicketRequest;
+use App\Http\Requests\UpdateTicketStatusRequest;
 use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -110,6 +111,36 @@ class TicketController extends Controller
         $ticket->load(['user', 'assignee']);
 
         return view('tickets.show', compact('ticket'));
+    }
+
+    public function assignToMe(Ticket $ticket): RedirectResponse
+    {
+        $user = request()->user();
+
+        if (!$user->isAgent()) {
+            abort(403);
+        }
+
+        $ticket->assigned_to = $user->id;
+        $ticket->save();
+
+        return back()->with('success', 'Ticket assigne.');
+    }
+
+    public function updateStatus(UpdateTicketStatusRequest $request, Ticket $ticket): RedirectResponse
+    {
+        $user = $request->user();
+
+        if (!$user->isAgent()) {
+            abort(403);
+        }
+
+        $status = $request->validated()['status'];
+        $ticket->status = $status;
+        $ticket->resolved_at = $status === Ticket::STATUS_RESOLVED ? now() : null;
+        $ticket->save();
+
+        return back()->with('success', 'Statut mis a jour.');
     }
 
     public function store(StoreTicketRequest $request): RedirectResponse

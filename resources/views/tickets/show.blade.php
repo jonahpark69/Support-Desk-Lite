@@ -48,7 +48,45 @@
                     <div class="meta__row">
                         <span>Assigne a {{ $ticket->assignee?->name ?? 'Non assigne' }}</span>
                     </div>
+                    @if ($ticket->resolved_at)
+                        <div class="meta__row">
+                            <span>Resolu le {{ $ticket->resolved_at->format('d/m/Y H:i') }}</span>
+                        </div>
+                    @endif
                 </div>
+
+                @if (auth()->user()->isAgent())
+                    <div>
+                        <h2 class="page-title" style="font-size: 1.1rem;">Actions agent</h2>
+                        <div class="action-bar" style="margin-top: var(--space-3);">
+                            <form method="POST" action="{{ route('tickets.assign', $ticket) }}">
+                                @csrf
+                                @method('PATCH')
+                                @if ($ticket->assigned_to === auth()->id())
+                                    <button class="btn btn--ghost" type="submit" disabled>Deja assigne</button>
+                                @else
+                                    <button class="btn btn--ghost" type="submit">M'assigner</button>
+                                @endif
+                            </form>
+
+                            <form method="POST" action="{{ route('tickets.status', $ticket) }}" class="action-bar">
+                                @csrf
+                                @method('PATCH')
+                                <div>
+                                    <label class="form-label" for="status">Changer statut</label>
+                                    <select class="input" id="status" name="status">
+                                        @foreach (['open' => 'Ouvert', 'in_progress' => 'En cours', 'resolved' => 'Resolu', 'closed' => 'Ferme'] as $value => $label)
+                                            <option value="{{ $value }}" @selected($ticket->status === $value)>
+                                                {{ $label }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <button class="btn btn--primary" type="submit">Mettre a jour</button>
+                            </form>
+                        </div>
+                    </div>
+                @endif
 
                 <div style="display: flex; gap: var(--space-3); flex-wrap: wrap;">
                     <a class="btn" href="{{ route('tickets.index') }}">Retour aux tickets</a>

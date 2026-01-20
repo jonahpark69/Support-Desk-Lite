@@ -46,6 +46,15 @@
   background: #79f0bf;
 }
 
+.btn--ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.btn--ghost:hover {
+  border-color: rgba(90, 228, 167, 0.6);
+}
+
 .input {
   width: 100%;
   padding: 0.65rem 0.8rem;
@@ -129,6 +138,13 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+}
+
+.action-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
 }
 
 .meta {
