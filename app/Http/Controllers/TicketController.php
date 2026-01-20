@@ -102,11 +102,7 @@ class TicketController extends Controller
 
     public function show(Ticket $ticket): View
     {
-        $user = request()->user();
-
-        if (!$user->isAgent() && $ticket->user_id !== $user->id) {
-            abort(403);
-        }
+        $this->authorize('view', $ticket);
 
         $ticket->load(['user', 'assignee']);
 
@@ -129,11 +125,7 @@ class TicketController extends Controller
 
     public function updateStatus(UpdateTicketStatusRequest $request, Ticket $ticket): RedirectResponse
     {
-        $user = $request->user();
-
-        if (!$user->isAgent()) {
-            abort(403);
-        }
+        $this->authorize('updateStatus', $ticket);
 
         $status = $request->validated()['status'];
         $ticket->status = $status;
