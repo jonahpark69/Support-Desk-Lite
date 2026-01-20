@@ -94,5 +94,56 @@
                 </div>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card__body">
+                <div>
+                    <h2 class="page-title" style="font-size: 1.1rem;">Commentaires</h2>
+                    <p class="page-subtitle">Partagez les details et l'avancement du ticket.</p>
+                </div>
+
+                <div class="comment-list">
+                    @forelse ($ticket->comments as $comment)
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                    <span>{{ $comment->user->name }}</span>
+                                    <span class="badge">
+                                        {{ $comment->user->isAgent() ? 'Agent' : 'User' }}
+                                    </span>
+                                </div>
+                                <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                            <div class="comment-body">
+                                {{ $comment->body }}
+                            </div>
+                        </div>
+                    @empty
+                        <p class="page-subtitle">Aucun commentaire pour le moment.</p>
+                    @endforelse
+                </div>
+
+                <form method="POST" action="{{ route('tickets.comments.store', $ticket) }}" style="display: grid; gap: var(--space-3);">
+                    @csrf
+                    <div>
+                        <label class="form-label" for="body">Ajouter un commentaire</label>
+                        <textarea
+                            class="input"
+                            id="body"
+                            name="body"
+                            rows="4"
+                            maxlength="2000"
+                            placeholder="Votre message..."
+                        >{{ old('body') }}</textarea>
+                        @error('body')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn btn--primary" type="submit">Ajouter</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </x-app-layout>

@@ -160,6 +160,36 @@
   font-size: 0.9rem;
 }
 
+.comment-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.comment-item {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.comment-body {
+  margin-top: var(--space-2);
+  color: var(--text);
+  white-space: pre-wrap;
+}
+
+.comment-date {
+  font-variant-numeric: tabular-nums;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
