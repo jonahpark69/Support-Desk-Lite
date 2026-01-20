@@ -70,6 +70,29 @@
   color: var(--accent);
 }
 
+.card__body {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.form-label {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.form-errors {
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.08);
+  border-radius: var(--radius-md);
+  padding: var(--space-3);
+}
+
+.form-error {
+  margin-top: var(--space-1);
+  color: #ff6b6b;
+  font-size: 0.85rem;
+}
+
 .grid {
   display: grid;
   gap: var(--space-4);
