@@ -11,6 +11,16 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/toast-test', function () {
+    session()->flash('success', 'Toast OK — UI system online.');
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified'])->name('toast.test');
+
+Route::get('/toast-error-test', function () {
+    session()->flash('error', 'Toast error — check the UI system.');
+    return redirect()->route('dashboard');
+})->middleware(['auth', 'verified'])->name('toast.error.test');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

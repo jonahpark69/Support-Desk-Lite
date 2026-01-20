@@ -1,0 +1,28 @@
+:root {
+  --bg: #0b0f15;
+  --surface: #121824;
+  --text: #e6edf5;
+  --muted: #9aa6b2;
+  --border: #1f2a3a;
+  --accent: #5ae4a7;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --shadow-1: 0 20px 40px rgba(5, 8, 15, 0.45);
+  --shadow-2: 0 12px 24px rgba(5, 8, 15, 0.35);
+
+  --motion-fast: 180ms;
+  --motion-medium: 320ms;
+
+  --font-sans: "Figtree", "Space Grotesk", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
