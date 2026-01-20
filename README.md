@@ -21,6 +21,22 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Verifier les relations Eloquent
+
+Lancer Tinker et tester rapidement les relations :
+
+```php
+php artisan tinker
+$ticket = App\Models\Ticket::first();
+$ticket->user;
+$ticket->assignee;
+$user = App\Models\User::where('role', 'user')->first();
+$agent = App\Models\User::where('role', 'agent')->first();
+$user->tickets;
+$agent?->assignedTickets;
+App\Models\Ticket::with(['user', 'assignee'])->first();
+```
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
