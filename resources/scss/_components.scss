@@ -125,6 +125,25 @@
   font-size: 0.85rem;
 }
 
+.ticket-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.meta {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.meta__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .pill {
   display: inline-flex;
   align-items: center;

@@ -99,6 +99,19 @@ class TicketController extends Controller
         return view('tickets.create');
     }
 
+    public function show(Ticket $ticket): View
+    {
+        $user = request()->user();
+
+        if (!$user->isAgent() && $ticket->user_id !== $user->id) {
+            abort(403);
+        }
+
+        $ticket->load(['user', 'assignee']);
+
+        return view('tickets.show', compact('ticket'));
+    }
+
     public function store(StoreTicketRequest $request): RedirectResponse
     {
         $validated = $request->validated();

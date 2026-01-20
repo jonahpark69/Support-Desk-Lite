@@ -116,7 +116,7 @@
                     </div>
 
                     <div>
-                        <button class="btn" type="button" disabled>Voir</button>
+                        <a class="btn" href="{{ route('tickets.show', $ticket) }}">Voir</a>
                     </div>
                 </div>
             @empty
