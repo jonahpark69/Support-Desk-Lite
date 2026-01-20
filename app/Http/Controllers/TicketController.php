@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketStatusRequest;
 use App\Models\Ticket;
+use App\Notifications\TicketCreatedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -139,7 +140,7 @@ class TicketController extends Controller
     {
         $validated = $request->validated();
 
-        Ticket::create([
+        $ticket = Ticket::create([
             'user_id' => $request->user()->id,
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
@@ -149,6 +150,15 @@ class TicketController extends Controller
             'assigned_to' => null,
             'resolved_at' => null,
         ]);
+
+        $request->user()->notify(new TicketCreatedNotification($ticket));
+
+        if ($ticket->assigned_to) {
+            $ticket->loadMissing('assignee');
+            if ($ticket->assignee) {
+                $ticket->assignee->notify(new TicketCreatedNotification($ticket, true));
+            }
+        }
 
         return redirect()
             ->route('dashboard')
