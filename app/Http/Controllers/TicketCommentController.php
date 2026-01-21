@@ -43,6 +43,7 @@ class TicketCommentController extends Controller
         $ticket->loadMissing(['user', 'assignee']);
         $recipients = collect([$ticket->user, $ticket->assignee])
             ->filter()
+            ->filter(fn ($user) => $user->notify_new_comment)
             ->unique('id')
             ->reject(fn ($user) => $user->id === $request->user()->id);
 
