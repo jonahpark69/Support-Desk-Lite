@@ -54,4 +54,9 @@ class Ticket extends Model
     {
         return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
     }
+
+    public function attachments()
+    {
+        return $this->hasMany(TicketAttachment::class)->orderBy('created_at', 'desc');
+    }
 }

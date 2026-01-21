@@ -37,6 +37,37 @@ $agent?->assignedTickets;
 App\Models\Ticket::with(['user', 'assignee'])->first();
 ```
 
+## Pieces jointes
+
+Si vous utilisez les pieces jointes, assurez-vous d'avoir le lien de stockage public :
+
+```bash
+php artisan storage:link
+```
+
+Pour augmenter la limite au-dela de 8MB, configurez aussi PHP : `upload_max_filesize` et `post_max_size`.
+
+## Upload limits (local)
+
+PHP peut bloquer l'upload avant Laravel. Fichier php.ini utilise :
+
+```
+/usr/local/etc/php/8.5/php.ini
+```
+
+Parametres a definir :
+
+```
+upload_max_filesize = 20M
+post_max_size = 20M
+```
+
+Verification rapide :
+
+```bash
+php -i | grep -E "upload_max_filesize|post_max_size"
+```
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.

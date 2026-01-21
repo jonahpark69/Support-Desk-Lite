@@ -13,6 +13,19 @@
             'high' => 'Eleve',
             'urgent' => 'Urgent',
         ];
+
+        $formatSize = function (?int $bytes): ?string {
+            if (!$bytes) {
+                return null;
+            }
+
+            $megabytes = $bytes / (1024 * 1024);
+            if ($megabytes >= 1) {
+                return number_format($megabytes, 1, ',', '') . ' MB';
+            }
+
+            return number_format($bytes / 1024, 0, ',', '') . ' KB';
+        };
     @endphp
 
     <div class="container" style="display: grid; gap: var(--space-6);">
@@ -92,6 +105,63 @@
                     <a class="btn" href="{{ route('tickets.index') }}">Retour aux tickets</a>
                     <a class="btn btn--primary" href="{{ route('tickets.create') }}">Creer un ticket</a>
                 </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card__body">
+                <div>
+                    <h2 class="page-title" style="font-size: 1.1rem;">Pieces jointes</h2>
+                    <p class="page-subtitle">Ajoutez des fichiers utiles pour le suivi.</p>
+                </div>
+
+                @if ($ticket->attachments->isEmpty())
+                    <p class="page-subtitle">Aucune piece jointe pour le moment.</p>
+                @else
+                    <div class="comment-list">
+                        @foreach ($ticket->attachments as $attachment)
+                            @php($sizeLabel = $formatSize($attachment->size))
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <span>{{ $attachment->original_name }}</span>
+                                        @if ($sizeLabel)
+                                            <span class="badge">{{ $sizeLabel }}</span>
+                                        @endif
+                                    </div>
+                                    <span class="comment-date">{{ $attachment->created_at->format('d/m/Y H:i') }}</span>
+                                </div>
+                                <div class="comment-body">
+                                    Ajoute par {{ $attachment->user->name }}
+                                </div>
+                                <div class="action-bar" style="margin-top: var(--space-3);">
+                                    <a class="btn btn--ghost" href="{{ route('tickets.attachments.download', [$ticket, $attachment]) }}">
+                                        Telecharger
+                                    </a>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <form
+                    method="POST"
+                    action="{{ route('tickets.attachments.store', $ticket) }}"
+                    enctype="multipart/form-data"
+                    style="display: grid; gap: var(--space-3);"
+                >
+                    @csrf
+                    <div>
+                        <label class="form-label" for="file">Ajouter une piece jointe</label>
+                        <input class="input" type="file" id="file" name="file" required>
+                        @error('file')
+                            <p class="form-error">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <div class="action-bar">
+                        <button class="btn btn--primary" type="submit">Envoyer</button>
+                    </div>
+                </form>
             </div>
         </div>
 
