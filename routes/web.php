@@ -36,6 +36,8 @@ Route::middleware('auth')->group(function () {
         ->name('tickets.attachments.store');
     Route::get('/tickets/{ticket}/attachments/{attachment}', [TicketAttachmentController::class, 'download'])
         ->name('tickets.attachments.download');
+    Route::delete('/tickets/{ticket}/attachments/{attachment}', [TicketAttachmentController::class, 'destroy'])
+        ->name('tickets.attachments.destroy');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

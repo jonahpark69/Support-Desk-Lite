@@ -47,4 +47,23 @@ class TicketAttachmentController extends Controller
 
         return Storage::disk('public')->download($attachment->path, $attachment->original_name);
     }
+
+    public function destroy(Ticket $ticket, TicketAttachment $attachment): RedirectResponse
+    {
+        $this->authorize('view', $ticket);
+
+        if ($attachment->ticket_id !== $ticket->id) {
+            abort(404);
+        }
+
+        $user = auth()->user();
+        if ($user->role !== 'agent' && $attachment->user_id !== $user->id) {
+            abort(403);
+        }
+
+        Storage::disk('public')->delete($attachment->path);
+        $attachment->delete();
+
+        return back()->with('success', 'Piece jointe supprimee.');
+    }
 }

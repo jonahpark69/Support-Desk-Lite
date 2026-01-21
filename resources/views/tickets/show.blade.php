@@ -138,6 +138,15 @@
                                     <a class="btn btn--ghost" href="{{ route('tickets.attachments.download', [$ticket, $attachment]) }}">
                                         Telecharger
                                     </a>
+                                    @if (auth()->user()->isAgent() || $attachment->user_id === auth()->id())
+                                        <form method="POST" action="{{ route('tickets.attachments.destroy', [$ticket, $attachment]) }}">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn--ghost" type="submit" onclick="return confirm('Supprimer cette piece jointe ?')">
+                                                Supprimer
+                                            </button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         @endforeach
