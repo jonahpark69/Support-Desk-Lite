@@ -22,6 +22,11 @@
                     <x-nav-link :href="route('tickets.create')" :active="request()->routeIs('tickets.create')">
                         {{ __('Nouveau ticket') }}
                     </x-nav-link>
+                    @if (Auth::user()->isAdmin())
+                        <x-nav-link :href="route('admin.agents.index')" :active="request()->routeIs('admin.agents.index')">
+                            {{ __('Agents') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -32,7 +37,7 @@
                         <button class="inline-flex items-center gap-2 px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div>{{ Auth::user()->name }}</div>
                             <span class="badge">
-                                {{ Auth::user()->isAgent() ? 'Agent' : 'User' }}
+                                {{ Auth::user()->isAdmin() ? 'Admin' : (Auth::user()->isAgent() ? 'Agent' : 'User') }}
                             </span>
 
                             <div class="ms-1">
@@ -86,6 +91,11 @@
             <x-responsive-nav-link :href="route('tickets.create')" :active="request()->routeIs('tickets.create')">
                 {{ __('Nouveau ticket') }}
             </x-responsive-nav-link>
+            @if (Auth::user()->isAdmin())
+                <x-responsive-nav-link :href="route('admin.agents.index')" :active="request()->routeIs('admin.agents.index')">
+                    {{ __('Agents') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

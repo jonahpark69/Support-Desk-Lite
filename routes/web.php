@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AgentController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketCommentController;
@@ -55,6 +56,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/notifications', [ProfileController::class, 'updateNotifications'])
         ->name('profile.notifications.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/admin/agents', [AgentController::class, 'index'])
+        ->middleware('admin')
+        ->name('admin.agents.index');
 });
 
 require __DIR__.'/auth.php';
