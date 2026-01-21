@@ -29,18 +29,7 @@
                 </div>
             </div>
 
-            <div class="toast-stack" data-toast-stack>
-                @if (session('success'))
-                    <div class="toast toast--success" role="status" data-timeout="3500">
-                        {{ session('success') }}
-                    </div>
-                @endif
-                @if (session('error'))
-                    <div class="toast toast--error" role="alert" data-timeout="3500">
-                        {{ session('error') }}
-                    </div>
-                @endif
-            </div>
+            <x-toast />
         </div>
     </body>
 </html>

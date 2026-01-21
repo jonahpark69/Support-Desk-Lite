@@ -16,12 +16,18 @@ Route::get('/dashboard', DashboardController::class)
     ->name('dashboard');
 
 Route::get('/toast-test', function () {
-    session()->flash('success', 'Toast OK — UI system online.');
+    session()->flash('toast', [
+        'type' => 'success',
+        'message' => 'Toast OK — UI system online.',
+    ]);
     return redirect()->route('dashboard');
 })->middleware(['auth', 'verified'])->name('toast.test');
 
 Route::get('/toast-error-test', function () {
-    session()->flash('error', 'Toast error — check the UI system.');
+    session()->flash('toast', [
+        'type' => 'error',
+        'message' => 'Toast error — check the UI system.',
+    ]);
     return redirect()->route('dashboard');
 })->middleware(['auth', 'verified'])->name('toast.error.test');
 

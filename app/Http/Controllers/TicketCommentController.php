@@ -19,6 +19,9 @@ class TicketCommentController extends Controller
             'body' => $request->validated()['body'],
         ]);
 
-        return back()->with('success', 'Commentaire ajoute.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Commentaire ajoute.',
+        ]);
     }
 }

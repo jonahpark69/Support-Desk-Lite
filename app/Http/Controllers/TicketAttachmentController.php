@@ -34,7 +34,10 @@ class TicketAttachmentController extends Controller
             'size' => $file->getSize(),
         ]);
 
-        return back()->with('success', 'Piece jointe envoyee.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Piece jointe envoyee.',
+        ]);
     }
 
     public function download(Ticket $ticket, TicketAttachment $attachment): StreamedResponse
@@ -64,6 +67,9 @@ class TicketAttachmentController extends Controller
         Storage::disk('public')->delete($attachment->path);
         $attachment->delete();
 
-        return back()->with('success', 'Piece jointe supprimee.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Piece jointe supprimee.',
+        ]);
     }
 }

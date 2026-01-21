@@ -133,7 +133,10 @@ class TicketController extends Controller
         $ticket->assigned_to = $user->id;
         $ticket->save();
 
-        return back()->with('success', 'Ticket assigne.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Ticket assigne.',
+        ]);
     }
 
     public function updateStatus(UpdateTicketStatusRequest $request, Ticket $ticket): RedirectResponse
@@ -150,7 +153,10 @@ class TicketController extends Controller
             $ticket->user->notify(new TicketStatusChangedNotification($ticket, $oldStatus, $ticket->status));
         }
 
-        return back()->with('success', 'Statut mis a jour.');
+        return back()->with('toast', [
+            'type' => 'success',
+            'message' => 'Statut mis a jour.',
+        ]);
     }
 
     public function store(StoreTicketRequest $request): RedirectResponse
@@ -179,6 +185,9 @@ class TicketController extends Controller
 
         return redirect()
             ->route('dashboard')
-            ->with('success', 'Ticket créé avec succès.');
+            ->with('toast', [
+                'type' => 'success',
+                'message' => 'Ticket créé avec succès.',
+            ]);
     }
 }
