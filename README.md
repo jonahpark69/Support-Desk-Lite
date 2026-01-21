@@ -109,9 +109,13 @@ php artisan test
 - Mode multi-projets
 
 ## Captures d'ecran
-- ![Tickets index](docs/screenshots/tickets-index.png)
-- ![Ticket show](docs/screenshots/ticket-show.png)
-- ![Admin agents](docs/screenshots/admin-agents.png)
+Apercu rapide des ecrans principaux.
+- ![Login](docs/screenshots/01-login.png)
+- ![Dashboard](docs/screenshots/02-dashboard.png)
+- ![Liste des tickets](docs/screenshots/03-tickets-index-filters.png)
+- ![Detail ticket](docs/screenshots/04-ticket-show-overview.png)
+- ![Pieces jointes & commentaires](docs/screenshots/05-ticket-show-attachments-comments.png)
+- ![Creation ticket](docs/screenshots/06-ticket-create-form.png)
 
 ## Troubleshooting
 - SQLite: verifier permissions sur `database/database.sqlite`
