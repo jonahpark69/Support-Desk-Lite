@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCommentRequest;
 use App\Models\Comment;
 use App\Models\Ticket;
+use App\Notifications\NewCommentNotification;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Notification;
 
 class TicketCommentController extends Controller
 {
@@ -30,11 +32,23 @@ class TicketCommentController extends Controller
                 ]);
         }
 
-        Comment::create([
+        $comment = Comment::create([
             'ticket_id' => $ticket->id,
             'user_id' => $request->user()->id,
             'body' => $cleanBody,
         ]);
+
+        $comment->loadMissing('user');
+
+        $ticket->loadMissing(['user', 'assignee']);
+        $recipients = collect([$ticket->user, $ticket->assignee])
+            ->filter()
+            ->unique('id')
+            ->reject(fn ($user) => $user->id === $request->user()->id);
+
+        if ($recipients->isNotEmpty()) {
+            Notification::send($recipients, new NewCommentNotification($ticket, $comment));
+        }
 
         return back()->with('toast', [
             'type' => 'success',
