@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketCommentController;
 use App\Http\Controllers\TicketController;
@@ -10,9 +11,9 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', DashboardController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::get('/toast-test', function () {
     session()->flash('success', 'Toast OK — UI system online.');

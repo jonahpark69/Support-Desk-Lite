@@ -20,6 +20,7 @@ class TicketController extends Controller
             'status' => $request->input('status', ''),
             'priority' => $request->input('priority', ''),
             'category' => $request->input('category', ''),
+            'assigned' => $request->input('assigned', ''),
             'sort' => $request->input('sort', 'new'),
         ];
 
@@ -48,6 +49,16 @@ class TicketController extends Controller
 
         if ($filters['category'] !== '') {
             $query->where('category', 'like', '%' . $filters['category'] . '%');
+        }
+
+        if ($filters['assigned'] !== '' && $request->user()->isAgent()) {
+            if ($filters['assigned'] === 'unassigned') {
+                $query->whereNull('assigned_to')
+                    ->where('status', '!=', Ticket::STATUS_RESOLVED);
+            } elseif ($filters['assigned'] === 'me') {
+                $query->where('assigned_to', $request->user()->id)
+                    ->where('status', '!=', Ticket::STATUS_RESOLVED);
+            }
         }
 
         if ($filters['sort'] === 'old') {
