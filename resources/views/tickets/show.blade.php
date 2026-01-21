@@ -109,6 +109,40 @@
             </div>
         </div>
 
+        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="mb-4">
+                <h2 class="text-lg font-semibold text-slate-900">Historique</h2>
+                <p class="text-sm text-slate-500">Suivi des changements de statut.</p>
+            </div>
+
+            @if ($ticket->statusChanges->isEmpty())
+                <p class="text-sm text-slate-500">Aucun changement de statut pour l'instant.</p>
+            @else
+                <ol class="relative border-l border-slate-200 pl-4">
+                    @foreach ($ticket->statusChanges as $change)
+                        @php
+                            $fromLabel = $statusLabels[$change->from_status] ?? $change->from_status;
+                            $toLabel = $statusLabels[$change->to_status] ?? $change->to_status;
+                            $authorLabel = $change->changedBy?->name ?: $change->changedBy?->email;
+                        @endphp
+                        <li class="relative pb-6 last:pb-0">
+                            <span class="absolute -left-1.5 top-1 h-2.5 w-2.5 rounded-full bg-slate-400"></span>
+                            <div class="text-sm font-medium text-slate-900">
+                                De {{ $fromLabel }} -> {{ $toLabel }}
+                            </div>
+                            <div class="mt-1 text-xs text-slate-500">
+                                @if ($authorLabel)
+                                    <span>Par {{ $authorLabel }}</span>
+                                    <span> | </span>
+                                @endif
+                                <span>{{ $change->created_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                        </li>
+                    @endforeach
+                </ol>
+            @endif
+        </div>
+
         <div class="card">
             <div class="card__body">
                 <div>

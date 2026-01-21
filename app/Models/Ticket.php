@@ -59,4 +59,9 @@ class Ticket extends Model
     {
         return $this->hasMany(TicketAttachment::class)->orderBy('created_at', 'desc');
     }
+
+    public function statusChanges()
+    {
+        return $this->hasMany(TicketStatusChange::class)->latest();
+    }
 }

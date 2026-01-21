@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketStatusRequest;
 use App\Models\Ticket;
+use App\Models\TicketStatusChange;
 use App\Notifications\TicketCreatedNotification;
 use App\Notifications\TicketStatusChangedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class TicketController extends Controller
@@ -117,7 +119,7 @@ class TicketController extends Controller
     {
         $this->authorize('view', $ticket);
 
-        $ticket->load(['user', 'assignee', 'comments.user', 'attachments.user']);
+        $ticket->load(['user', 'assignee', 'comments.user', 'attachments.user', 'statusChanges.changedBy']);
 
         return view('tickets.show', compact('ticket'));
     }
@@ -145,12 +147,27 @@ class TicketController extends Controller
 
         $oldStatus = $ticket->status;
         $status = $request->validated()['status'];
-        $ticket->status = $status;
-        $ticket->resolved_at = $status === Ticket::STATUS_RESOLVED ? now() : null;
-        $ticket->save();
+        $changed = $oldStatus !== $status;
 
-        if ($oldStatus !== $ticket->status) {
-            $ticket->user->notify(new TicketStatusChangedNotification($ticket, $oldStatus, $ticket->status));
+        DB::transaction(function () use ($ticket, $status, $changed, $request, $oldStatus) {
+            if (!$changed) {
+                return;
+            }
+
+            $ticket->status = $status;
+            $ticket->resolved_at = $status === Ticket::STATUS_RESOLVED ? now() : null;
+            $ticket->save();
+
+            TicketStatusChange::create([
+                'ticket_id' => $ticket->id,
+                'from_status' => $oldStatus,
+                'to_status' => $status,
+                'changed_by' => $request->user()?->id,
+            ]);
+        });
+
+        if ($changed) {
+            $ticket->user->notify(new TicketStatusChangedNotification($ticket, $oldStatus, $status));
         }
 
         return back()->with('toast', [
