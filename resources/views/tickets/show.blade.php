@@ -72,15 +72,16 @@
                     <div>
                         <h2 class="page-title" style="font-size: 1.1rem;">Actions agent</h2>
                         <div class="action-bar" style="margin-top: var(--space-3);">
-                            <form method="POST" action="{{ route('tickets.assign', $ticket) }}">
-                                @csrf
-                                @method('PATCH')
-                                @if ($ticket->assigned_to === auth()->id())
-                                    <button class="btn btn--ghost" type="submit" disabled>Deja assigne</button>
-                                @else
-                                    <button class="btn btn--ghost" type="submit">M'assigner</button>
-                                @endif
-                            </form>
+                            @can('take', $ticket)
+                                <form method="POST" action="{{ route('tickets.take', $ticket) }}">
+                                    @csrf
+                                    @if ($ticket->assigned_to === auth()->id())
+                                        <button class="btn btn--ghost" type="submit" disabled>Deja pris en charge</button>
+                                    @else
+                                        <button class="btn btn--ghost" type="submit">Prendre en charge</button>
+                                    @endif
+                                </form>
+                            @endcan
 
                             <form method="POST" action="{{ route('tickets.status', $ticket) }}" class="action-bar">
                                 @csrf

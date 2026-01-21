@@ -16,4 +16,13 @@ class TicketPolicy
     {
         return $user->isAgent();
     }
+
+    public function take(User $user, Ticket $ticket): bool
+    {
+        if (!$user->isAgent()) {
+            return false;
+        }
+
+        return $ticket->assigned_to === null || $ticket->assigned_to === $user->id;
+    }
 }
