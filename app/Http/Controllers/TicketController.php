@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\TicketStatusChange;
 use App\Notifications\TicketCreatedNotification;
 use App\Notifications\TicketStatusChangedNotification;
+use App\Services\AssignmentService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -176,7 +177,7 @@ class TicketController extends Controller
         ]);
     }
 
-    public function store(StoreTicketRequest $request): RedirectResponse
+    public function store(StoreTicketRequest $request, AssignmentService $assignmentService): RedirectResponse
     {
         $validated = $request->validated();
 
@@ -193,6 +194,8 @@ class TicketController extends Controller
 
         $request->user()->notify(new TicketCreatedNotification($ticket));
 
+        $assignedAgent = $assignmentService->assignTicketIfNeeded($ticket);
+
         if ($ticket->assigned_to) {
             $ticket->loadMissing('assignee');
             if ($ticket->assignee) {
@@ -200,11 +203,15 @@ class TicketController extends Controller
             }
         }
 
+        $toastMessage = $assignedAgent
+            ? 'Ticket cree avec succes. Assigne a ' . $assignedAgent->name . '.'
+            : 'Ticket cree avec succes. Aucun agent disponible, ticket non assigne.';
+
         return redirect()
             ->route('dashboard')
             ->with('toast', [
                 'type' => 'success',
-                'message' => 'Ticket créé avec succès.',
+                'message' => $toastMessage,
             ]);
     }
 }
