@@ -13,10 +13,27 @@ class TicketCommentController extends Controller
     {
         $this->authorize('create', [Comment::class, $ticket]);
 
+        $rawBody = $request->validated()['body'];
+        $cleanBody = strip_tags($rawBody);
+        $cleanBody = str_replace(["\r\n", "\r"], "\n", $cleanBody);
+        $cleanBody = preg_replace('/[ \t]+/', ' ', $cleanBody);
+        $cleanBody = preg_replace('/\n{3,}/', "\n\n", $cleanBody);
+        $cleanBody = trim($cleanBody ?? '');
+
+        if ($cleanBody === '') {
+            return back()
+                ->withErrors(['body' => 'Commentaire invalide.'])
+                ->withInput()
+                ->with('toast', [
+                    'type' => 'error',
+                    'message' => 'Commentaire invalide.',
+                ]);
+        }
+
         Comment::create([
             'ticket_id' => $ticket->id,
             'user_id' => $request->user()->id,
-            'body' => $request->validated()['body'],
+            'body' => $cleanBody,
         ]);
 
         return back()->with('toast', [

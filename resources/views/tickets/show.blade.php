@@ -238,7 +238,7 @@
                                     <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
                                 </div>
                                 <div class="comment-body">
-                                    {{ $comment->body }}
+                                    {!! nl2br(e($comment->body)) !!}
                                 </div>
                             </div>
                         @endforeach
