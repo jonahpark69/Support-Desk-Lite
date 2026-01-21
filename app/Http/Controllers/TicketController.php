@@ -9,6 +9,7 @@ use App\Models\TicketStatusChange;
 use App\Notifications\TicketCreatedNotification;
 use App\Notifications\TicketStatusChangedNotification;
 use App\Services\AssignmentService;
+use App\Services\TicketQueryService;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
@@ -16,64 +17,14 @@ use Illuminate\View\View;
 
 class TicketController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, TicketQueryService $ticketQueryService): View
     {
-        $filters = [
-            'q' => $request->input('q', ''),
-            'status' => $request->input('status', ''),
-            'priority' => $request->input('priority', ''),
-            'category' => $request->input('category', ''),
-            'assigned' => $request->input('assigned', ''),
-            'sort' => $request->input('sort', 'new'),
-        ];
-
-        $query = Ticket::query()->with('assignee');
-
-        if (!$request->user()->isAgent()) {
-            $query->where('user_id', $request->user()->id);
-        }
-
-        if ($filters['q'] !== '') {
-            $search = $filters['q'];
-            $query->where(function ($builder) use ($search) {
-                $builder
-                    ->where('title', 'like', '%' . $search . '%')
-                    ->orWhere('description', 'like', '%' . $search . '%');
-            });
-        }
-
-        if ($filters['status'] !== '') {
-            $query->where('status', $filters['status']);
-        }
-
-        if ($filters['priority'] !== '') {
-            $query->where('priority', $filters['priority']);
-        }
-
-        if ($filters['category'] !== '') {
-            $query->where('category', 'like', '%' . $filters['category'] . '%');
-        }
-
-        if ($filters['assigned'] !== '' && $request->user()->isAgent()) {
-            if ($filters['assigned'] === 'unassigned') {
-                $query->whereNull('assigned_to')
-                    ->where('status', '!=', Ticket::STATUS_RESOLVED);
-            } elseif ($filters['assigned'] === 'me') {
-                $query->where('assigned_to', $request->user()->id)
-                    ->where('status', '!=', Ticket::STATUS_RESOLVED);
-            }
-        }
-
-        if ($filters['sort'] === 'old') {
-            $query->orderBy('created_at', 'asc');
-        } else {
-            $query->orderBy('created_at', 'desc');
-        }
-
+        $filters = $ticketQueryService->filtersFromRequest($request);
+        $query = $ticketQueryService->buildQuery($request->user(), $filters)->with('assignee');
         $tickets = $query->paginate(10)->withQueryString();
 
         $categoryOptions = Ticket::query()
-            ->when(!$request->user()->isAgent(), function ($builder) use ($request) {
+            ->when(!$request->user()->isAgent() && !$request->user()->isAdmin(), function ($builder) use ($request) {
                 $builder->where('user_id', $request->user()->id);
             })
             ->whereNotNull('category')

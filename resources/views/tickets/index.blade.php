@@ -93,8 +93,16 @@
             </div>
         </div>
 
-        <div class="ticket-meta">
+        <div class="ticket-meta" style="justify-content: space-between; align-items: center;">
             <span>{{ $tickets->total() }} resultats</span>
+            @if (auth()->user()->isAdmin() || auth()->user()->isAgent())
+                <a
+                    class="btn btn--ghost"
+                    href="{{ route('tickets.export.csv', request()->except('page')) }}"
+                >
+                    Exporter CSV
+                </a>
+            @endif
         </div>
 
         <div

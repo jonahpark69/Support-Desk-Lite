@@ -6,6 +6,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TicketCommentController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketAttachmentController;
+use App\Http\Controllers\Tickets\ExportTicketsCsvController;
 use App\Http\Controllers\Tickets\TakeTicketController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,9 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile/notifications', [ProfileController::class, 'updateNotifications'])
         ->name('profile.notifications.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/tickets/export/csv', ExportTicketsCsvController::class)
+        ->name('tickets.export.csv');
 
     Route::get('/admin/agents', [AgentController::class, 'index'])
         ->middleware('admin')
