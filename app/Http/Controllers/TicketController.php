@@ -6,6 +6,7 @@ use App\Http\Requests\StoreTicketRequest;
 use App\Http\Requests\UpdateTicketStatusRequest;
 use App\Models\Ticket;
 use App\Notifications\TicketCreatedNotification;
+use App\Notifications\TicketStatusChangedNotification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -128,10 +129,15 @@ class TicketController extends Controller
     {
         $this->authorize('updateStatus', $ticket);
 
+        $oldStatus = $ticket->status;
         $status = $request->validated()['status'];
         $ticket->status = $status;
         $ticket->resolved_at = $status === Ticket::STATUS_RESOLVED ? now() : null;
         $ticket->save();
+
+        if ($oldStatus !== $ticket->status) {
+            $ticket->user->notify(new TicketStatusChangedNotification($ticket, $oldStatus, $ticket->status));
+        }
 
         return back()->with('success', 'Statut mis a jour.');
     }
