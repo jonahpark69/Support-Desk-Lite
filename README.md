@@ -1,106 +1,125 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Support Desk Lite
+Outil de gestion de tickets multi-roles (user/agent/admin) avec workflow clair, commentaires, notifications et export CSV.
+Focus sur une UX propre, une securite basique solide, et un socle testable.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Stack technique
+- Laravel 11
+- Breeze (auth + profile)
+- Tailwind CSS
+- Alpine.js
+- SQLite
+- Vite
 
-## About Laravel
+## Fonctionnalites principales
+- Creation et suivi de tickets (statuts, priorites, categories)
+- Workflow agent: prise en charge, changement de statut, timeline
+- Commentaires avec sanitization anti-XSS
+- Notifications email (nouveau commentaire) avec preferences
+- Export CSV des tickets avec filtres
+- Page admin Agents (liste + charge)
+- Toasts UI centralises
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Roles et permissions
+- User: cree et suit ses tickets, commente ses tickets
+- Agent: voit les tickets, assigne, change statut, export CSV
+- Admin: acces aux vues admin (ex: Agents)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Installation locale
+### Prerequis
+- PHP 8.2+
+- Composer
+- Node.js + npm
+- SQLite
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
-
-## Verifier les relations Eloquent
-
-Lancer Tinker et tester rapidement les relations :
-
-```php
-php artisan tinker
-$ticket = App\Models\Ticket::first();
-$ticket->user;
-$ticket->assignee;
-$user = App\Models\User::where('role', 'user')->first();
-$agent = App\Models\User::where('role', 'agent')->first();
-$user->tickets;
-$agent?->assignedTickets;
-App\Models\Ticket::with(['user', 'assignee'])->first();
+### Installation
+```bash
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
 ```
 
-## Pieces jointes
+Configurer SQLite dans `.env`:
+```
+DB_CONNECTION=sqlite
+DB_DATABASE=/chemin/absolu/vers/database/database.sqlite
+```
 
-Si vous utilisez les pieces jointes, assurez-vous d'avoir le lien de stockage public :
+### Base de donnees
+```bash
+php artisan migrate --seed
+```
 
+### Lancement
+```bash
+php artisan serve
+npm run dev
+```
+
+### Stockage (pieces jointes)
 ```bash
 php artisan storage:link
 ```
 
-Pour augmenter la limite au-dela de 8MB, configurez aussi PHP : `upload_max_filesize` et `post_max_size`.
+## Comptes de demo
+Seeder inclus via `DatabaseSeeder`:
+- agent@demo.test / password
+- user@demo.test / password
 
-## Upload limits (local)
-
-PHP peut bloquer l'upload avant Laravel. Fichier php.ini utilise :
-
-```
-/usr/local/etc/php/8.5/php.ini
-```
-
-Parametres a definir :
-
-```
-upload_max_filesize = 20M
-post_max_size = 20M
-```
-
-Verification rapide :
-
+Pas de compte admin par defaut. Creation rapide via Tinker:
 ```bash
-php -i | grep -E "upload_max_filesize|post_max_size"
+php artisan tinker
+App\Models\User::factory()->state([
+  'name' => 'Admin Demo',
+  'email' => 'admin@demo.test',
+  'role' => 'admin',
+  'password' => bcrypt('password'),
+])->create();
 ```
 
-## Learning Laravel
+## Tests
+```bash
+php artisan test
+```
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Structure du projet
+- app/Http/Controllers: logique des actions
+- app/Services: services metier (assignment, requetes tickets)
+- app/Notifications: emails
+- app/Policies: autorisations
+- resources/views: pages et composants Blade
+- resources/js: UI (toasts)
+- database/migrations, seeders
+- tests/Feature
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Securite et UX
+- Rate limit sur creation de tickets (anti-spam)
+- Commentaires nettoyes (strip_tags + normalisation)
+- Policies + middleware admin
+- Toasts UI centralises
+- Badges FR normalises (status/priorite)
+- Historique des statuts (timeline)
+- Export CSV controle (agent/admin)
 
-## Laravel Sponsors
+## Roadmap (courte)
+- Participants du ticket + notifications avancees
+- SLA et priorisation automatique
+- Filtres avances + vue analytics
+- Mode multi-projets
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Captures d'ecran
+- ![Tickets index](docs/screenshots/tickets-index.png)
+- ![Ticket show](docs/screenshots/ticket-show.png)
+- ![Admin agents](docs/screenshots/admin-agents.png)
 
-### Premium Partners
+## Troubleshooting
+- SQLite: verifier permissions sur `database/database.sqlite`
+- Mails: utiliser `MAIL_MAILER=log` et verifier `storage/logs/laravel.log`
+- Vite: relancer `npm run dev` si les styles ne chargent pas
+- Cache: `php artisan config:clear` / `php artisan cache:clear`
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Conventions Git / branches
+- Base: `develop`
+- Branches feature: `feature/ma-feature`
+- PR courtes et scope clair
