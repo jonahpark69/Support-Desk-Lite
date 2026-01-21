@@ -216,28 +216,54 @@
                     <p class="page-subtitle">Partagez les details et l'avancement du ticket.</p>
                 </div>
 
-                <div class="comment-list">
-                    @forelse ($ticket->comments as $comment)
-                        <div class="comment-item">
-                            <div class="comment-header">
-                                <div style="display: flex; align-items: center; gap: var(--space-2);">
-                                    <span>{{ $comment->user->name }}</span>
-                                    <span class="badge">
-                                        {{ $comment->user->isAgent() ? 'Agent' : 'User' }}
-                                    </span>
+                @if ($ticket->comments->isEmpty())
+                    <x-empty-state
+                        title="Aucun commentaire"
+                        message="Aucun commentaire pour le moment."
+                    >
+                        <x-slot:icon>
+                            <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 8h10M7 12h6m-8 9 3.2-3.2A6 6 0 0 0 7 3h10a6 6 0 0 1 6 6v2a6 6 0 0 1-6 6H9.2L7 19z"/>
+                            </svg>
+                        </x-slot:icon>
+                        @can('create', [\App\Models\Comment::class, $ticket])
+                            <x-slot:actions>
+                                <a
+                                    href="#comment-form"
+                                    class="inline-flex items-center rounded-full bg-slate-900 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-slate-900"
+                                >
+                                    Ajouter un commentaire
+                                </a>
+                            </x-slot:actions>
+                        @endcan
+                    </x-empty-state>
+                @else
+                    <div class="comment-list">
+                        @foreach ($ticket->comments as $comment)
+                            <div class="comment-item">
+                                <div class="comment-header">
+                                    <div style="display: flex; align-items: center; gap: var(--space-2);">
+                                        <span>{{ $comment->user->name }}</span>
+                                        <span class="badge">
+                                            {{ $comment->user->isAgent() ? 'Agent' : 'User' }}
+                                        </span>
+                                    </div>
+                                    <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
                                 </div>
-                                <span class="comment-date">{{ $comment->created_at->format('d/m/Y H:i') }}</span>
+                                <div class="comment-body">
+                                    {{ $comment->body }}
+                                </div>
                             </div>
-                            <div class="comment-body">
-                                {{ $comment->body }}
-                            </div>
-                        </div>
-                    @empty
-                        <p class="page-subtitle">Aucun commentaire pour le moment.</p>
-                    @endforelse
-                </div>
+                        @endforeach
+                    </div>
+                @endif
 
-                <form method="POST" action="{{ route('tickets.comments.store', $ticket) }}" style="display: grid; gap: var(--space-3);">
+                <form
+                    id="comment-form"
+                    method="POST"
+                    action="{{ route('tickets.comments.store', $ticket) }}"
+                    style="display: grid; gap: var(--space-3);"
+                >
                     @csrf
                     <div>
                         <label class="form-label" for="body">Ajouter un commentaire</label>
