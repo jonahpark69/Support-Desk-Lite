@@ -82,19 +82,13 @@ class TicketController extends Controller
             ->orderBy('category')
             ->pluck('category');
 
-        $statusOptions = [
-            Ticket::STATUS_OPEN => 'Ouvert',
-            Ticket::STATUS_IN_PROGRESS => 'En cours',
-            Ticket::STATUS_RESOLVED => 'Resolue',
-            Ticket::STATUS_CLOSED => 'Ferme',
-        ];
+        $statusOptions = collect(config('ticket.status', []))
+            ->mapWithKeys(fn ($item, $key) => [$key => $item['label'] ?? $key])
+            ->all();
 
-        $priorityOptions = [
-            Ticket::PRIORITY_LOW => 'Basse',
-            Ticket::PRIORITY_NORMAL => 'Normale',
-            Ticket::PRIORITY_HIGH => 'Haute',
-            Ticket::PRIORITY_URGENT => 'Urgente',
-        ];
+        $priorityOptions = collect(config('ticket.priority', []))
+            ->mapWithKeys(fn ($item, $key) => [$key => $item['label'] ?? $key])
+            ->all();
 
         $sortOptions = [
             'new' => 'Plus recent',

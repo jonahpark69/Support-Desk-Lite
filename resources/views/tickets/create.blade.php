@@ -43,10 +43,11 @@
                     <div>
                         <label class="form-label" for="priority">Priorité</label>
                         <select class="input" id="priority" name="priority" required>
-                            <option value="low" @selected(old('priority', 'normal') === 'low')>Basse</option>
-                            <option value="normal" @selected(old('priority', 'normal') === 'normal')>Normale</option>
-                            <option value="high" @selected(old('priority', 'normal') === 'high')>Haute</option>
-                            <option value="urgent" @selected(old('priority', 'normal') === 'urgent')>Urgente</option>
+                            @foreach (config('ticket.priority', []) as $value => $config)
+                                <option value="{{ $value }}" @selected(old('priority', 'normal') === $value)>
+                                    {{ $config['label'] ?? $value }}
+                                </option>
+                            @endforeach
                         </select>
                         @error('priority')
                             <p class="form-error">{{ $message }}</p>

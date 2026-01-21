@@ -1,19 +1,5 @@
 <x-app-layout>
     @php
-        $statusLabels = [
-            'open' => 'Ouvert',
-            'in_progress' => 'En cours',
-            'resolved' => 'Resolu',
-            'closed' => 'Ferme',
-        ];
-
-        $priorityLabels = [
-            'low' => 'Faible',
-            'normal' => 'Normal',
-            'high' => 'Eleve',
-            'urgent' => 'Urgent',
-        ];
-
         $formatSize = function (?int $bytes): ?string {
             if (!$bytes) {
                 return null;
@@ -35,11 +21,11 @@
                 <p class="page-subtitle">{{ $ticket->title }}</p>
             </div>
 
-            <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-                <span class="pill pill--status">{{ $statusLabels[$ticket->status] ?? $ticket->status }}</span>
-                <span class="pill pill--priority">{{ $priorityLabels[$ticket->priority] ?? $ticket->priority }}</span>
+            <div class="flex flex-wrap gap-2">
+                <x-badge type="status" :value="$ticket->status" />
+                <x-badge type="priority" :value="$ticket->priority" />
                 @if ($ticket->category)
-                    <span class="pill pill--category">{{ $ticket->category }}</span>
+                    <x-badge type="category" :value="$ticket->category" />
                 @endif
             </div>
         </div>
@@ -89,9 +75,9 @@
                                 <div>
                                     <label class="form-label" for="status">Changer statut</label>
                                     <select class="input" id="status" name="status">
-                                        @foreach (['open' => 'Ouvert', 'in_progress' => 'En cours', 'resolved' => 'Resolu', 'closed' => 'Ferme'] as $value => $label)
+                                        @foreach (config('ticket.status', []) as $value => $config)
                                             <option value="{{ $value }}" @selected($ticket->status === $value)>
-                                                {{ $label }}
+                                                {{ $config['label'] ?? $value }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -121,14 +107,15 @@
                 <ol class="relative border-l border-slate-200 pl-4">
                     @foreach ($ticket->statusChanges as $change)
                         @php
-                            $fromLabel = $statusLabels[$change->from_status] ?? $change->from_status;
-                            $toLabel = $statusLabels[$change->to_status] ?? $change->to_status;
                             $authorLabel = $change->changedBy?->name ?: $change->changedBy?->email;
                         @endphp
                         <li class="relative pb-6 last:pb-0">
                             <span class="absolute -left-1.5 top-1 h-2.5 w-2.5 rounded-full bg-slate-400"></span>
-                            <div class="text-sm font-medium text-slate-900">
-                                De {{ $fromLabel }} -> {{ $toLabel }}
+                            <div class="flex flex-wrap items-center gap-2 text-sm font-medium text-slate-900">
+                                <span>De</span>
+                                <x-badge type="status" :value="$change->from_status" />
+                                <span aria-hidden="true">→</span>
+                                <x-badge type="status" :value="$change->to_status" />
                             </div>
                             <div class="mt-1 text-xs text-slate-500">
                                 @if ($authorLabel)

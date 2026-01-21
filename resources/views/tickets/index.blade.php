@@ -170,11 +170,11 @@
                                     @endif
                                 </div>
 
-                                <div style="display: flex; flex-wrap: wrap; gap: var(--space-2);">
-                                    <span class="pill pill--status">{{ $ticket->status }}</span>
-                                    <span class="pill pill--priority">{{ $ticket->priority }}</span>
+                                <div class="flex flex-wrap gap-2">
+                                    <x-badge type="status" :value="$ticket->status" />
+                                    <x-badge type="priority" :value="$ticket->priority" />
                                     @if ($ticket->category)
-                                        <span class="pill pill--category">{{ $ticket->category }}</span>
+                                        <x-badge type="category" :value="$ticket->category" />
                                     @endif
                                 </div>
 
