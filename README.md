@@ -102,6 +102,24 @@ php artisan test
 - Historique des statuts (timeline)
 - Export CSV controle (agent/admin)
 
+## Versionning & releases
+- Ce projet suit le SemVer.
+- Voir [CHANGELOG.md](CHANGELOG.md) et [VERSION](VERSION).
+- Convention de tags Git: `vX.Y.Z`.
+
+## Release v1.0.0 — Resume
+- Authentification via Laravel Breeze
+- Roles user/agent/admin
+- Tickets: creation, index, recherche, filtres, pagination, show
+- Commentaires sur ticket
+- Workflow agent: prise en charge en 1 clic + changement de statut
+- Timeline (historique des statuts)
+- Badges normalises + mapping FR (statuts/priorites)
+- Etats vides + skeleton loader
+- Export CSV des tickets (respect des filtres)
+- Admin: page liste des agents
+- Notifications email "Nouveau commentaire" + preferences
+
 ## Roadmap (courte)
 - Participants du ticket + notifications avancees
 - SLA et priorisation automatique
